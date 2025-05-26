@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Animeverse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Toon+Jr&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #121212;
+      font-family:'Toon Jr', sans-serif;
+      color: #ddd;
+    }
+
+    header {
+  background-color: #1c1c1c;
+  padding: 20px 24px;
+  user-select: none;
+  color: #f0f0f0;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 1.2px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 10px 24px;
+  background-color: #181818;
+  user-select: none;
+  flex-wrap: wrap;
+}
+h3{
+  color: white;
+}
+    nav a {
+      color: #00bfff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #55cfff;
+    }
+
+    .search-container {
+      padding: 16px 24px;
+      background-color: #181818;
+      display: flex;
+      justify-content: center;
+    }
+    .search-bar {
+      position: relative;
+      max-width: 500px;
+      width: 100%;
+      display: flex;
+      gap: 8px;
+    }
+    #search-input {
+      flex-grow: 1;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      outline: none;
+    }
+    button {
+      background-color: #e50914;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #bf0810;
+    }
+    .suggestions {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      right: 0;
+      background-color: #222;
+      max-height: 160px;
+      overflow-y: auto;
+      border-radius: 0 0 6px 6px;
+      z-index: 100;
+      color: white;
+      font-size: 13px;
+      user-select: none;
+    }
+    .suggestions div {
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .suggestions div:hover {
+      background-color: #444;
+    }
+
+    .anime-section, .scroll-movies, 
+   
+    .movie-heading {
+   font-size: 2em;
+   margin: 20px 0 10px 20px;
+   font-style: italic;
+   font-family: sans-serif;
+ }
+    .movie-heading u, {
+      text-decoration-color: #00bfff;
+    }
+    
+    .anime-heading {
+      font-size: 1em;
+      margin-bottom: 20px;
+      font-style: italic;
+      font-family: sans-serif;
+    }
+
+    /* Changed scroll-section to grid layout and removed scrolling */
+    .scroll-section {
+      display: grid;
+      gap: 16px;
+      padding-bottom: 12px;
+      grid-template-columns: repeat(6, 1fr);
+      /* no overflow-x */
+    }
+    .imdb-rating {
+  font-size: 13px;
+  color: #ffcc00;
+  margin-top: 5px;
+}
+
+
+    /* Anime card styles like Toonstream */
+    .anime-card {
+      width: 100%; /* Full width of grid column */
+      background-color: #181818;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.5);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      color: #eee;
+      user-select: none;
+    }
+    .anime-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.8);
+      z-index: 10;
+    }
+
+    /* Image container with 1:1 ratio */
+    .anime-card img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 9 / 13;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid #2a2a2a;
+      border-radius: 8px 8px 0 0;
+      user-select: none;
+    }
+
+    .anime-card h3 {
+      margin: 8px 0 12px;
+      font-size: 14px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px 24px;
+      background-color: #1c1c1c;
+      color: #888;
+      font-size: 14px;
+      user-select: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      nav {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .scroll-section {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .search-container {
+        padding: 12px 16px;
+      }
+    }
+    .scroll-movies .anime-card {
+      flex: 0 0 auto;
+      width: 150px;
+      scroll-snap-align: start;
+    }
+    
+   
+    .scroll-popular .anime-card {
+      flex: 0 0 auto;
+width: 150px;
+scroll-snap-align: start;
+    }
+
+    /* Keep existing horizontal scroll for other sections */
+    .scroll-movies, .scroll-popular {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+    .scroll-movies::-webkit-scrollbar,
+    .scroll-popular::-webkit-scrollbar {
+      height: 8px;
+    }
+    .scroll-movies::-webkit-scrollbar-thumb,
+    .scroll-popular::-webkit-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 4px;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Animeverse</h1>
+  </header>
+  <nav>
+    <a href="./index.html">Home</a>
+    <a href="./Mystery.html">Mystery</a>
+    <a href="#">Action</a>
+    <a href="./child.html">Child</a>
+  </nav>
+
+
+  <div class="search-container">
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search anime..." onkeyup="showSuggestions()">
+      <button onclick="searchAnime()">Search</button>
+      <div id="suggestions" class="suggestions"></div>
+    </div>
+  </div>
+
+  <div class="anime-section">
+    <div class="anime-heading"><u>Latest Anime</u></div>
+    <div class="scroll-section">
+      <div class="anime-card">
+        <a href="./fire force.html">
+          <img src=".//MV5BZWZlMTFjNDgtYTdkOC00MmYxLTk0YmEtZGQ4NmE5MTM3OTg0XkEyXkFqcGc@._V1_.jpg" alt="Jujutsu Kaisen">
+          <h3>Fire Force</h3>
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="https://www.gvhdbjs.site/p/the-shiunji-family-children.html?m=1">
+          <img src=".//Screenshot_2025-05-21-20-43-19-34_680d03679600f7af0b4c700c6b270fe7.jpg" alt="Naruto">
+          <h3>The Shiunji Family</h3>
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="./sakamoto old days.html">
+          <img src="./Screenshot_2025-05-09-07-21-33-86_680d03679600f7af0b4c700c6b270fe7.jpg" alt="Sakamoto Days">
+          <h3>Sakamoto Days</h3>
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="./wind breaker.html">
+          <img src="./MV5BNDA2MDRhNTEtMjU4NC00MzZjLWJjM2UtZDg4MWI5OWU3ZjEwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Solo Leveling">
+          <h3>Wind Breaker</h3>
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="https://www.gvhdbjs.site/p/teogonia-season-1.html?m=1">
+          <img src=".//MV5BMWE1NjJmOGQtMTYyOC00NTQ4LWJjMjgtNGMyYzJjOWQ3YjdiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Demon Slayer">
+          <h3>Teogonia</h3>
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="https://www.gvhdbjs.site/p/mobile-suit-gundam-gquuuuuux-body-font.html?m=1">
+          <img src=".//MSG_GQuacks_main_visual.png" alt="Death Note">
+          <h3>Mobile Suit Gundan</h3>
+
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="https://www.gvhdbjs.site/p/devil-man-cry-body-font-family-arial.html?m=1">
+          <img src="./Screenshot_2025-05-10-16-37-53-01_680d03679600f7af0b4c700c6b270fe7.jpg" alt="Devil May Cry">
+          <h3>Devil May Cry</h3>
+          
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="./the apothecary.html">
+          <img src="./Kusuriyaaaa.jpg" alt="Konosuba">
+          <h3>The Apothecary Dairies</h3>
+          
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="https://www.gvhdbjs.site/p/classroom-of-elite-season-1_7.html">
+          <img src="./Screenshot_2025-05-11-06-58-48-99_680d03679600f7af0b4c700c6b270fe7.jpg" alt="Classroom Of Elite">
+          <h3>Classroom Of Elite</h3>
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="./Jojo Bizzare adventure.html">
+          <img src="./Screenshot_2025-05-12-14-55-01-79_680d03679600f7af0b4c700c6b270fe7.jpg" alt="Jojo's Bizzare Adventure">
+          <h3>Jojo's Bizzare Adventure</h3>
+        </a>
+      </div>
+
+      <div class="anime-card">
+        <a href="./overlord.html">
+          <img src="./Screenshot_2025-05-12-14-56-15-48_680d03679600f7af0b4c700c6b270fe7.jpg" alt="Overlord">
+          <h3>Overlord</h3>
+        </a>
+      </div>
+
+     <div class="anime-card">
+          <a href="./Black Butler.html">
+            <img src="./images (1) (7).jpeg">
+            <h3>Black Butler</h3></h3></a>
+        </div>
+        <div class="anime-card">
+          <a href="https://www.gvhdbjs.site/p/i-parry-everything-s01-body-font-family.html?m=1">
+            <img src="./81aMdKqgnKL._UF1000,1000_QL80_.jpg">
+            <h3>I Parry Everything</h3></a>
+        </div>
+  </div>
+    </div>
+  </div>
+
+    <div class="movie-heading"><u>Latest Movies</u></div>
+  <div class="scroll-movies">
+    <div class="anime-card">
+      <a href="https://jpg-stream-pdf-6a6a0e19b535.herokuapp.com/watch/67d08a316e509b21bb228fd6">
+        <img src="./Screenshot_2025-05-16-20-48-56-11_680d03679600f7af0b4c700c6b270fe7.jpg" alt="Demon Slayer Movie">
+        <h3 style="padding-top: -70px;">Demon Slayer: Mugen Train</h3>
+      </a>
+    </div>
+    <div class="anime-card">
+      <a href="https://drive.google.com/file/d/1fOk5XwivuMloyx0IiFQj_UTiQeWaWQlR/view?usp=drivesdk">
+        <img src="./images (1) (5).jpeg">
+     <h3>Your Name</h3>
+      </a>
+    </div>
+    <div class="anime-card">
+      <a href="./silentvoice.html">
+        <img src="./A_Silent_Voice_Film_Poster.jpg" alt="A Silent Voice">
+        <h3>A Silent Voice</h3>
+      </a>
+    </div>
+    <div class="anime-card">
+      <a href="https://drive.google.com/file/d/1cyVRUCAkNMYCbTmD5ock2a7_ESYoDrq0/view?usp=drivesdk">
+        <img src="./images (1) (2).jpeg" alt="Weathering With You">
+        <h3>Weathering With You</h3>
+      </a>
+    </div>
+    <div class="anime-card">
+      <a href="./onepiece-red.html">
+        <img src="./One_Piece_Film_Red_Visual_Poster.jpg" alt="One Piece Film: Red">
+        <h3>One Piece: Red</h3>
+      </a>
+    </div>
+    <div class="anime-card">
+      <a href="./bubble.html">
+        <img src="./Bubble.jpg">
+        <h3>Bubble</h3>
+      </a>
+    </div>
+  </div>
+  <div class="movie-heading"><u>Latest Movies</u></div>
+ <div class="scroll-movies">
+   <div class="anime-card">
+    <a href="./bleach.html">
+      <img src="./Bleach.png">
+      <h3>Bleach</h3>
+    </a>
+  </div>
+  <div class="anime-card">
+    <a href="./aot.html">
+      <img src="./images (1) (3).jpeg" alt="Attack on Titan">
+      <h3>Attack on Titan</h3>
+    </a>
+  </div>
+  <div class="anime-card">
+    <a href="./one punch man.html">
+      <img src="./images (1) (4).jpeg" alt="One Punch Man">
+      <h3>One Punch Man</h3>
+    </a>
+  </div>
+</div>
+<!-- 📬 Newsletter Signup -->
+
+
+<!-- 💬 Contact / Feedback -->
+<div style="text-align: center; padding: 20px; background-color: #111; color: white;">
+  <h2>💬 Got Suggestions or Requests?</h2>
+  <p>Email us at: <a href="mailto:verseanime823@gmail.com" style="color: #00bfff;">verseanime823@gmail.com</a></p>
+</div>
+
+<!-- 🔗 Social Media Links -->
+<div style="text-align: center; padding: 20px; background-color: #1c1c1c; color: white;">
+  <h2>🔗 Follow Us</h2>
+  <a href="https://youtube.com/@animia-g6q?si=Hfqe7AHhCCDXySBo" style="margin: 0 10px; color: #00bfff;">Youtube</a>
+  <a href="https://t.me/animenerded" style="margin: 0 10px; color: #00bfff;">Telegram</a>
+
+</div>
+
+<!-- 🗂️ Quick Navigation -->
+<div style="text-align: center; padding: 20px; background-color: #111; color: white;">
+  <h2>🗂️ Quick Links</h2>
+  <a href="./index.html" style="margin: 0 10px; color: #00bfff;">Home</a>
+  <a href="#" style="margin: 0 10px; color: #00bfff;">Action</a>
+  <a href="./Mystery.html" style="margin: 0 10px; color: #00bfff;">Mystery</a>
+  <a href="./child.html" style="margin: 0 10px; color: #00bfff;">Child</a>
+</div>
+
+<!-- ⚠️ Disclaimer -->
+<div style="text-align: center; padding: 20px; background-color: #1c1c1c; color: #ccc; font-size: 0.9em;">
+  <p><strong>Disclaimer:</strong> We do not host any videos on our servers. All content is linked from third-party sources for informational purposes only.</p>
+</div>
+
+<!-- 🔝 Back to Top Button -->
+<button onclick="scrollToTop()" 
+        style="position: fixed; bottom: 60px; right: 20px; padding: 10px 15px; background-color: #e50914; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  ↑ Top
+</button>
+
+<script>
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+
+  <footer>
+    © 2025 AnimeStream. All rights reserved.
+  </footer>
+
+  <script>
+    const animeTitles = [
+      'Jujutsu Kaisen', 'Naruto', 'Sakamoto Days', 'Solo Leveling',
+      'Demon Slayer', 'Cyberpunk: Edgerunners', 'Death Note', 'Monster',
+      'Paranoia Agent', 'Devil May Cry', 'Konosuba', 'Spy x Family',
+      'Classroom Of Elte', 'Overlord', "JoJo's Bizarre Adventure",
+      'Vinland Saga', 'Fire Force', 'Mob Psycho 100', 'Your Name', 'One Piece: Red', 'Demon Slayer: Mugen Train','A Silent Voice','Weathering With You','bubble', 'I Parry Everything', 'The Shiunji Family Children', 'Mobile Suite Gundam Gquuuuuux', 'black butler','Wind breaker', 'Teogonia', 'The Apothecary Diaries', 'The Gorilla Gods go to Girls'
+    ];
+
+    function showSuggestions() {
+      const input = document.getElementById("search-input").value.toLowerCase();
+      const suggestionsBox = document.getElementById("suggestions");
+      suggestionsBox.innerHTML = '';
+
+      if (input.length === 0) return;
+
+      const filtered = animeTitles.filter(title => title.toLowerCase().includes(input));
+      if (filtered.length === 0) {
+        const noResult = document.createElement("div");
+        noResult.textContent = "No results found";
+        noResult.style.color = "red";
+        suggestionsBox.appendChild(noResult);
+      }
+
+      filtered.forEach(title => {
+        const div = document.createElement("div");
+        div.textContent = title;
+        div.onclick = () => {
+          document.getElementById("search-input").value = title;
+          suggestionsBox.innerHTML = '';
+        };
+        suggestionsBox.appendChild(div);
+      });
+    }
+
+    function searchAnime() {
+      const input = document.getElementById("search-input").value.toLowerCase();
+      const cards = document.querySelectorAll(".anime-card");
+      cards.forEach(card => {
+        const title = card.querySelector("h3").textContent.toLowerCase();
+        card.style.display = title.includes(input) ? "flex" : "none";
+      });
+    }
+  </script>
+</body>
+</html>
